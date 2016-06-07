@@ -63,7 +63,6 @@ for (site in siteNos)
     sampRate = siteQ$dateTime[2] - siteQ$dateTime[1] #check that the sample rate is every 15 min
     if ( sampRate == 15)
     {
-      write.csv(siteQ,na="NA",file=paste0(site,".csv"))
       print(site)
       print(dim(siteQ))
       allQ <- rbind(allQ,siteQ)
