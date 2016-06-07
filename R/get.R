@@ -54,11 +54,15 @@ for (site in siteNos)
     print(paste("site",site,"had different column names; they were changed"))
   }
   
-  if (nrow(siteQ) == 192)
+  if (nrow(siteQ) > 1) #first check that there is actually data in siteQ
   {
-    write.csv(siteQ,na="NA",file=paste0(site,".csv"))
-    print(site)
-    print(dim(siteQ))
-    allQ <- rbind(allQ,siteQ)
+    sampRate = siteQ$dateTime[2] - siteQ$dateTime[1] #check that the sample rate is every 15 min
+    if ( sampRate == 15)
+    {
+      write.csv(siteQ,na="NA",file=paste0(site,".csv"))
+      print(site)
+      print(dim(siteQ))
+      allQ <- rbind(allQ,siteQ)
+    }
   }
 }
