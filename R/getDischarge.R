@@ -1,6 +1,7 @@
 # get the data
 
 library(dataRetrieval)
+library(dplyr)
 
 getDischarge <- function(bbox = "-85,29,-80,33.9"){
   
