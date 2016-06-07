@@ -1,5 +1,9 @@
 # get the data
 rm(list = ls())
+
+
+library(dataRetrieval)
+
 #find sites within lat/lon box, >100 km^2 drainage
 #expanded output option didnt seem to provide anything extra?
 sites <- whatNWISsites(bbox="-85,29,-80,33.9",siteType="ST",siteOutput="Expanded",drainAreaMin="100", parameterCd="00060")
