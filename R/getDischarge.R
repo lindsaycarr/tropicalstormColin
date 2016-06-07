@@ -8,32 +8,6 @@ library(dataRetrieval)
 #expanded output option didnt seem to provide anything extra?
 sites <- whatNWISsites(bbox="-85,29,-80,33.9",siteType="ST",siteOutput="Expanded",drainAreaMin="100", parameterCd="00060")
 
-retryNWISdata <- function(..., retries=3){
-  
-  safeWQP = function(...){
-    result = tryCatch({
-      readNWISdata(...)
-    }, error = function(e) {
-      if(e$message == 'Operation was aborted by an application callback'){
-        stop(e)
-      }
-      return(NULL)
-    })
-    return(result)
-  }
-  retry = 1
-  while (retry < retries){
-    result = safeWQP(...)
-    if (!is.null(result)){
-      retry = retries
-    } else {
-      message('query failed, retrying')
-      retry = retry+1
-    }
-  }
-  return(result)
-}
-
 #get the actual data, converted to numeric format
 siteNos <- t(sites$site_no)
 startDate <- as.Date("2016-06-4")
@@ -46,7 +20,7 @@ allQ <- data.frame()
 
 for (site in siteNos)
 {
-  siteQ <- retryNWISdata(service = "iv",convertType = TRUE, sites=site, startDate=startDate,endDate=endDate,parameterCd="00060")
+  siteQ <- readNWISdata(service = "iv",convertType = TRUE, sites=site, startDate=startDate,endDate=endDate,parameterCd="00060")
   #print(dim(siteQ))
   siteQ <- renameNWISColumns(siteQ)
   
