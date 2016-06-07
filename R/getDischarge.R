@@ -20,7 +20,8 @@ getDischarge <- function(bbox = "-85,29,-80,33.9"){
   
   for (site in siteNos)
   {
-    siteQ <- readNWISdata(service = "iv",convertType = TRUE, sites=site, startDate=startDate,endDate=endDate,parameterCd="00060")
+    siteQ <- readNWISdata(service = "iv",convertType = TRUE, sites=site, 
+                          startDate=startDate, endDate=endDate, parameterCd="00060")
     #print(dim(siteQ))
     siteQ <- renameNWISColumns(siteQ)
     
