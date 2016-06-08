@@ -5,7 +5,7 @@ precipMap <- function(precipData){
   
   precipData_cols <- precipData %>% 
     group_by(state_fullname, county_mapname) %>% 
-    summarize(cumprecip = sum(precip)) %>% 
+    summarize(cumprecip = sum(precipVal)) %>% 
     mutate(cols = cut(cumprecip, breaks = precip_breaks, labels = cols, right=FALSE))
   
   par(mar = c(0,0,0,0))
@@ -15,8 +15,11 @@ precipMap <- function(precipData){
            add = TRUE, lwd = 1.5, col = "darkgrey")
   map('county', regions = precipData_cols$county_mapname, 
            add = TRUE, fill = TRUE, col = precipData_cols$cols)
-  legend(x = "bottomright", fill = cols, cex = 0.7, title = "Precipitation (inches)",
+    legend(x = "bottomright", fill = cols, cex = 0.7, title = "Mean Precipitation (in)",
               legend = paste('<', precip_breaks[-1]))
+  title("Cumulative Precipitation in the path of Tropical Storm Colin\n
+        County-by-County Mean for [Time Period]",line = 2)  #title was being masked by geoknife
+  #text(x=1,labels="subheader") #trying to make a subtitle of smaller font
 }
 
 
