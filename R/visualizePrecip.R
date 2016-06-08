@@ -37,8 +37,8 @@ tscolin_counties <- data.frame(state = 'florida',
                                county = c('taylor', 'madison'))
 tscolin_counties_string <- paste(tscolin_counties$state, tscolin_counties$county, sep=",")
 
-region_map_counties <- map('county', regions = ts_states, col = "grey")
-region_map <- map('state', regions = ts_states, add = TRUE, lwd = 1.5)
+region_map_counties <- map('county', regions = tscolin_states, col = "grey")
+region_map <- map('state', regions = tscolin_states, add = TRUE, lwd = 1.5)
 highlight_counties <- map('county', regions = tscolin_counties_string, 
                           add = TRUE, fill = TRUE, col = 'cornflowerblue')
 
