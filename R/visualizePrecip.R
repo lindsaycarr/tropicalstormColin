@@ -1,46 +1,22 @@
 
-############ HUC ############
-
-library(httr)
-library(rgdal)
-library(magrittr)
-
-# wfs <- 'http://cida.usgs.gov/gdp/geoserver/wfs'
-# feature <- 'derivative:wbdhu8_alb_simp'
-# plot_CRS <- '+init=epsg:2163'
-# 
-# destination <- tempfile(pattern = 'huc_shape', fileext='.zip')
-# query <- sprintf('%s?service=WFS&request=GetFeature&typeName=%s&outputFormat=shape-zip&version=1.0.0', 
-#                  wfs, feature)
-# file <- GET(query, write_disk(destination, overwrite=T), progress())
-# shp.path <- tempdir()
-# unzip(destination, exdir = shp.path)
-# hucs <- readOGR(shp.path, layer='wbdhu8_alb_simp') %>% 
-#   spTransform(CRS(plot_CRS))
-# unlink(destination)
-# 
-# 
-# cols = rep(NA, length(counts.by.id))
-# cols[!is.na(bin)] = pal[bin[!is.na(bin)]]
-# 
-# xlim <- c(-1534607.9,2050000.1) # specific to the transform we are using
-# ylim <- c(-2072574.6,727758.7)
-# 
-# plot(hucs, add = FALSE, border = NA, lwd = 0.5, xlim = xlim, ylim = ylim)
-
-############ /// ############
-
-library(maps)
-
-tscolin_states <- c('florida', 'georgia', 'south carolina','north carolina')
-tscolin_counties <- data.frame(state = 'florida', 
-                               county = c('taylor', 'madison'))
-tscolin_counties_string <- paste(tscolin_counties$state, tscolin_counties$county, sep=",")
-
-region_map_counties <- map('county', regions = tscolin_states, col = "grey")
-region_map <- map('state', regions = tscolin_states, add = TRUE, lwd = 1.5)
-highlight_counties <- map('county', regions = tscolin_counties_string, 
-                          add = TRUE, fill = TRUE, col = 'cornflowerblue')
-
+precipMap <- function(precipData){
+  cols <- palette(blues9)[-1]
+  precip_breaks <- seq(0, 80, by = 10)
+  
+  precipData_cols <- precipData %>% 
+    group_by(state_fullname, county_mapname) %>% 
+    summarize(cumprecip = sum(precip)) %>% 
+    mutate(cols = cut(cumprecip, breaks = precip_breaks, labels = cols, right=FALSE))
+  
+  par(mar = c(0,0,0,0))
+  
+  m <- map('county', regions = precipData_cols$state_fullname, col = "lightgrey")
+  map('state', regions = precipData_cols$state_fullname, 
+           add = TRUE, lwd = 1.5, col = "darkgrey")
+  map('county', regions = precipData_cols$county_mapname, 
+           add = TRUE, fill = TRUE, col = precipData_cols$cols)
+  legend(x = "bottomright", fill = cols, cex = 0.7, title = "Precipitation (inches)",
+              legend = paste('<', precip_breaks[-1]))
+}
 
 
