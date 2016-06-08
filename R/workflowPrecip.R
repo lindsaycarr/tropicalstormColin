@@ -27,6 +27,5 @@ counties_df <- data.frame(state = c(rep("FL", length(counties_fl)), rep("GA", le
   mutate(county_mapname = paste(state_fullname, tolower(county), sep=",")) %>% 
   mutate(county = paste(county, 'County')) 
 
-# q <- getDischarge()
 precipData <- getPrecip(counties_df)
 precipMap(precipData)
