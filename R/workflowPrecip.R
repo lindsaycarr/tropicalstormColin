@@ -1,12 +1,11 @@
 # merge precip + streamflow data
 library(dplyr)
 library(tidyr)
-library(dataRetrieval)
 library(geoknife) #order matters because 'query' is masked by a function in dplyr
 library(maps)
 
 source('R/getPrecip.R')
-source('R/visualizePrecip.R', echo=TRUE)
+source('R/visualizePrecip.R')
 
 counties_fl <- c('Taylor', 'Madison', 'Hamilton', 'Lafayette', 'Suwannee', 'Columbia', 
                  'Baker', 'Union', 'Gilchrist', 'Dixie')
