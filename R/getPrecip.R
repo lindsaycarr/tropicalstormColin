@@ -1,43 +1,36 @@
 # get precip data
-library(dplyr)
-library(geoknife) #order matters because 'query' is masked by a function in dplyr
 
-# wg_c <- webgeom(geom = 'derivative:US_Counties', attribute = 'COUNTY')
-# c <- query(wg_c, 'values')
-# wg_f <- webgeom(geom = 'derivative:US_Counties', attribute = 'FIPS')
-# f <- query(wg_f, 'values')
-# wg_s <- webgeom(geom = 'derivative:US_Counties', attribute = 'STATE')
-# s <- query(wg_s, 'values')
-# florida_info <- data.frame(state = s, county = c, fips = f) %>% 
-#   filter(state == "FL")
-# 
-# county <- c('Taylor County', 'Madison County')
-# 
+getPrecip <- function(counties_df, startDate = "2016-06-06 05:00:00", endDate = "2016-06-07 05:00:00"){
+  
+  wg_s <- webgeom(geom = 'derivative:US_Counties', attribute = 'STATE')
+  wg_c <- webgeom(geom = 'derivative:US_Counties', attribute = 'COUNTY')
+  wg_f <- webgeom(geom = 'derivative:US_Counties', attribute = 'FIPS')
+  county_info <- data.frame(state = query(wg_s, 'values'), county = query(wg_c, 'values'), 
+                            fips = query(wg_f, 'values'), stringsAsFactors = FALSE) %>% 
+    unique() 
+  
+  counties_fips <- counties_df %>% left_join(county_info, by = c("state", "county"))
+  
+  stencil <- webgeom(geom = 'derivative:US_Counties',
+                     attribute = 'FIPS',
+                     values = counties_fips$fips)
+  
+  fabric <- webdata(url = 'http://cida.usgs.gov/thredds/dodsC/stageiv_combined', 
+                    variables = "Total_precipitation_surface_1_Hour_Accumulation", 
+                    times = c(as.POSIXct(startDate), 
+                              as.POSIXct(endDate)))
+  
+  job <- geoknife(stencil, fabric, wait = TRUE)
+  precipData <- result(job)
+  
+  precip <- precipData %>% 
+    select(-variable, -statistic) %>% 
+    gather(key = fips, value = precip, -DateTime) %>% 
+    left_join(counties_fips, by="fips")
+  
+  return(precip)
+}
 
-############ County ############
 
-stencil <- webgeom(geom = 'derivative:US_Counties',
-                   attribute = 'COUNTY',
-                   values = 'Taylor County')
-
-############ /// ############
-
-############ HUC ############
-
-# hucs <- c('03110102','03110101','03110103','03110205','031102011',
-#           '03110203','03110204','03110202','03110206')
-# hucs_query_string <- paste0('HUC8::', paste(hucs, collapse=','))
-# 
-# stencil <- webgeom(hucs_query_string)
-
-############ /// ############
-
-fabric <- webdata(url = 'http://cida.usgs.gov/thredds/dodsC/stageiv_combined', 
-                  variables = "Total_precipitation_surface_1_Hour_Accumulation", 
-                  times = c(as.POSIXct("2016-06-06 05:00:00"), 
-                            as.POSIXct("2016-06-07 05:00:00")))
-
-job <- geoknife(stencil, fabric, wait = TRUE)
-precipData <- result(job)
 
 
