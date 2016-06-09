@@ -17,7 +17,11 @@ precipMap <- function(precipData, startDate, endDate){
   
   # some county names are mismatched, only plot the ones that maps library 
   # knows about and then order them the same as the map
-  precipData_cols <- precipData_cols %>% filter(county_mapname %in% m1$names)
+  precipData_cols <- precipData_cols %>%
+    mutate(county_mapname = gsub(x = county_mapname, pattern = 'saint', replacement = 'st')) %>%
+    mutate(county_mapname = gsub(x = county_mapname, pattern = 'okaloosa', 
+                                 replacement = 'okaloosa:main')) %>% 
+    filter(county_mapname %in% m1$names)
   precipData_cols <- precipData_cols[na.omit(match(m1$names, precipData_cols$county_mapname)),]
   
   m3 <- map('county', regions = precipData_cols$county_mapname, 
