@@ -1,6 +1,6 @@
 # get precip data
 
-getPrecip <- function(counties_df, startDate = "2016-06-06 05:00:00", endDate = "2016-06-07 05:00:00"){
+getPrecip <- function(states, startDate, endDate){
   
   wg_s <- webgeom(geom = 'derivative:US_Counties', attribute = 'STATE')
   wg_c <- webgeom(geom = 'derivative:US_Counties', attribute = 'COUNTY')
@@ -9,7 +9,10 @@ getPrecip <- function(counties_df, startDate = "2016-06-06 05:00:00", endDate = 
                             fips = query(wg_f, 'values'), stringsAsFactors = FALSE) %>% 
     unique() 
   
-  counties_fips <- counties_df %>% left_join(county_info, by = c("state", "county"))
+  counties_fips <- county_info %>% filter(state %in% states) %>%
+    mutate(state_fullname = tolower(state.name[match(state, state.abb)])) %>%
+    mutate(county_mapname = paste(state_fullname, tolower(county), sep=",")) %>%
+    mutate(county_mapname = unlist(strsplit(county_mapname, split = " county")))
   
   stencil <- webgeom(geom = 'derivative:US_Counties',
                      attribute = 'FIPS',
@@ -20,7 +23,8 @@ getPrecip <- function(counties_df, startDate = "2016-06-06 05:00:00", endDate = 
                     times = c(as.POSIXct(startDate), 
                               as.POSIXct(endDate)))
   
-  job <- geoknife(stencil, fabric, wait = TRUE)
+  job <- geoknife(stencil, fabric, wait = TRUE, REQUIRE_FULL_COVERAGE=FALSE)
+  check(job)
   precipData <- result(job)
   precipData2 <- precipData %>% 
     select(-variable, -statistic) %>% 
@@ -30,7 +34,3 @@ getPrecip <- function(counties_df, startDate = "2016-06-06 05:00:00", endDate = 
   return(precipData2)
   
 }
-
-
-
-
