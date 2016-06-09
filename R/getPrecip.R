@@ -27,7 +27,7 @@ getPrecip <- function(states, startDate, endDate){
   check(job)
   precipData <- result(job, with.units=TRUE)
   precipData2 <- precipData %>% 
-    select(-variable, -statistic) %>% 
+    select(-variable, -statistic, -units) %>% 
     gather(key = fips, value = precipVal, -DateTime) %>% 
     left_join(counties_fips, by="fips")
   
