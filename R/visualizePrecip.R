@@ -6,7 +6,8 @@ precipMap <- function(precipData, startDate, endDate){
   precipData_cols <- precipData %>% 
     group_by(state_fullname, county_mapname) %>% 
     summarize(cumprecip = sum(precipVal)) %>% 
-    mutate(cols = cut(cumprecip, breaks = precip_breaks, labels = cols, right=FALSE))
+    mutate(cols = cut(cumprecip, breaks = precip_breaks, labels = cols, right=FALSE)) %>% 
+    mutate(cols = as.character(cols))
   
   par(mar = c(0,0,3,0))
   
@@ -19,8 +20,8 @@ precipMap <- function(precipData, startDate, endDate){
   # knows about and then order them the same as the map
   precipData_cols <- precipData_cols %>%
     mutate(county_mapname = gsub(x = county_mapname, pattern = 'saint', replacement = 'st')) %>%
-    mutate(county_mapname = gsub(x = county_mapname, pattern = 'okaloosa', 
-                                 replacement = 'okaloosa:main')) %>% 
+    mutate(county_mapname = gsub(x = county_mapname, pattern = 'okaloosa',
+                                 replacement = 'okaloosa:main')) %>%
     filter(county_mapname %in% m1$names)
   precipData_cols <- precipData_cols[na.omit(match(m1$names, precipData_cols$county_mapname)),]
   
