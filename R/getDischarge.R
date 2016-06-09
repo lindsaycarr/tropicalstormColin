@@ -78,4 +78,4 @@ getDischarge <- function(bbox = "-85,29,-80,33.9", minDrainage = "100", start="2
   return(allQ_info)
 }
 
-#Q <- getDischarge() #test the function
+Q <- getDischarge(start="2016-06-4", end="2016-06-09") #test the function
