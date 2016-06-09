@@ -22,13 +22,13 @@ getPrecip <- function(counties_df, startDate = "2016-06-06 05:00:00", endDate = 
   
   job <- geoknife(stencil, fabric, wait = TRUE)
   precipData <- result(job)
-  
-  precip <- precipData %>% 
+  precipData2 <- precipData %>% 
     select(-variable, -statistic) %>% 
-    gather(key = fips, value = precip, -DateTime) %>% 
+    gather(key = fips, value = precipVal, -DateTime) %>% 
     left_join(counties_fips, by="fips")
   
-  return(precip)
+  return(precipData2)
+  
 }
 
 
