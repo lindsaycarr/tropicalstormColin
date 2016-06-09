@@ -29,7 +29,7 @@ precipMap <- function(precipData, startDate, endDate){
             add = TRUE, fill = TRUE, col = precipData_cols$cols)
   
   legend(x = "bottomright", fill = cols, cex = 0.7, bty = 'n', 
-         title = "Cumulative\nPrecipitation (in)",
+         title = "Cumulative\nPrecipitation (mm)",
          legend = c(paste('<', precip_breaks[-c(1,length(precip_breaks))]), 
                     paste('>', tail(precip_breaks,2)[1]))) # greater
   graphics::title("Cumulative Precipitation from Tropical Storm Colin",

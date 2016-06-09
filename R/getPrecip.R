@@ -25,7 +25,7 @@ getPrecip <- function(states, startDate, endDate){
   
   job <- geoknife(stencil, fabric, wait = TRUE, REQUIRE_FULL_COVERAGE=FALSE)
   check(job)
-  precipData <- result(job)
+  precipData <- result(job, with.units=TRUE)
   precipData2 <- precipData %>% 
     select(-variable, -statistic) %>% 
     gather(key = fips, value = precipVal, -DateTime) %>% 
